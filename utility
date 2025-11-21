@@ -1,0 +1,84 @@
+=========================
+ GPG KEY Related ISSUE
+=========================
+
+# vector --version
+# cat /etc/pki/rpm-gpg/RPM-GPG-KEY-vector 
+# rpm --gpg --list-secret-keys --keyid-format=long
+# rpm -q --queryformat "%{SUMMARY}\n" $(rpm -q gpg-pubkey)
+# rpm -q gpg-pubkey --qf '%{NAME}-%{VERSION}-%{RELEASE}\t%{SUMMARY}\n'
+# rpm -q --queryformat "%{SUMMARY}\n" $(rpm -q gpg-pubkey)rpm --erase --allmatches gpg-pubkey-*
+# rpm -q --queryformat "%{SUMMARY}\n" $(rpm -q gpg-pubkey)rpm --erase --allmatches gpg-pubkey-2f86d6a1-5cf7cefb
+# rpm --erase --allmatches gpg-pubkey-2f86d6a1-5cf7cefb
+# rpm --erase --allmatches gpg-pubkey-*
+# vim /etc/pki/rpm-gpg/RPM-GPG-KEY-vector
+# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-vector
+# cat /etc/pki/rpm-gpg/RPM-GPG-KEY-DATADOG_new > /etc/pki/rpm-gpg/RPM-GPG-KEY-vector
+# rpm -qa gpg-pubkey
+
+Check Importer information
+# rpm -qi gpg-pubkey-abcdef12 | Packager
+# rpm --rebuilddb
+
+==============================
+Configure Repo Through Proxy:
+==============================
+
+[ol8_oracle_epel]
+name=Oracle Linux 8 EPEL  (x86_64)
+baseurl=https://mirrors.kernel.org/fedora-epel/8/Everything/x86_64/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora
+proxy=http://proxy01-gap.therapoci.net:3128
+
+Configure Docker Repo Through Proxy:
+
+[ol8_oracle_docker_ce]
+name=Oracle Linux 8 Docker  (x86_64)
+baseurl=https://download.docker.com/linux/rhel/8/x86_64/stable/
+enabled=1
+gpgcheck=1
+file:///etc/pki/rpm-gpg/RPM-GPG-KEY-DOCKER
+proxy=http://proxy01-bd.therapbd.net:3128
+
+
+===========  
+ rpm db
+==========
+# rm -f /var/lib/rpm/__db*
+# rpm --rebuilddb
+
+====================
+ patching related
+====================
+# yum history info 
+# yum update --exclude=vector
+
+===================
+Yum dependencies
+===================
+
+To check the dependencies of a specific installed package:
+# rpm -qR <package_name>
+To see the packages installed due to a specific package:
+To find out which packages were installed as dependencies when installing a specific package, you can use the -qi option to display information about the package, including its installation history:
+
+# rpm -qi <package_name>
+
+# repoquery -q --installed --whatrequires freetype-2.9.1-
+# repoquery -q --installed --whatrequires grub2-tools-
+
+# dnf history 
+
+ID     | Command line                                                                                    | Date and time    | Action(s)      | Altered
+------------------------------------------------------------------------------------------------------------------------------------------------------
+     6 | install perl                                                                                    | 2024-11-18 23:48 | I, U           |  211   
+     5 | install nagios                                                                                  | 2024-11-18 17:50 | Install        |   33 E<
+     4 | install epel-release                                                                            | 2024-11-18 17:47 | Install        |    1 >E
+     3 | update -y                                                                                       | 2024-11-18 17:45 | Upgrade        |    2   
+     2 | update                                                                                          | 2024-11-06 21:34 | I, U           |  184 E<
+     1 |                                                                                                 | 2024-11-06 20:54 | Install        | 1183 >E
+# dnf history info 6
+
+
